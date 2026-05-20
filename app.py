@@ -362,7 +362,7 @@ movie_input = st.text_input(
 # BUTTON
 # =========================================
 
-if st.button("Cari Rekomendasi"):
+if st.button("Search"):
 
     if movie_input.strip() == "":
 
