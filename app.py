@@ -28,6 +28,21 @@ df = load_data()
 cosine_sim = load_similarity()
 
 # =========================================
+# FALLBACK HYBRID SCORE
+# =========================================
+
+if 'hybrid_score' not in df.columns:
+
+    df['hybrid_score'] = (
+        df['vote_average'] / 10
+    )
+
+if 'bayesian_score' not in df.columns:
+
+    df['bayesian_score'] = (
+        df['vote_average']
+    )
+# =========================================
 # PREPROCESSING
 # =========================================
 
@@ -39,7 +54,7 @@ df['title_lower'] = df['title'].str.lower()
 
 def get_recommendations(user_input, top_n=5):
 
-    user_input = user_input.lower().strip()
+    cleaned_input = user_input.lower().strip()
 
     # =====================================
     # NORMALISASI INPUT USER
@@ -65,24 +80,14 @@ def get_recommendations(user_input, top_n=5):
         "mirip"
     ]
 
-    cleaned_input = user_input
-
     for word in remove_words:
-        cleaned_input = cleaned_input.replace(word, "")
+
+        cleaned_input = cleaned_input.replace(
+            word,
+            ""
+        )
 
     cleaned_input = cleaned_input.strip()
-
-    # =====================================
-    # DETEKSI BERDASARKAN GENRE
-    # =====================================
-
-    # =========================================
-    # RECOMMENDATION FUNCTION
-    # =========================================
-
-def get_recommendations(user_input, top_n=5):
-
-    cleaned_input = user_input.lower().strip()
 
     # =====================================
     # DETEKSI GENRE DARI INPUT USER
@@ -318,17 +323,6 @@ def get_recommendations(user_input, top_n=5):
 # FUNCTION LABEL SENTIMENT
 # =========================================
 
-def sentiment_label(score):
-
-    if score >= 0.3:
-        return "Positif"
-
-    elif score >= 0:
-        return "Netral"
-
-    else:
-        return "Negatif"
-
 # =========================================
 # LABEL REKOMENDASI
 # =========================================
@@ -409,7 +403,7 @@ if st.button("Cari Rekomendasi"):
                     )
 
                     st.write(
-                        f"Sentiment Score : {round(row['sentiment_score'], 3)} ({sentiment_label(row['sentiment_score'])})"
+                    f"Bayesian Score : {round(row['bayesian_score'], 3)}"
                     )
 
                     st.write(
